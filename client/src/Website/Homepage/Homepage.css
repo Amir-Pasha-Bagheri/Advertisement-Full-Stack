@@ -1,0 +1,184 @@
+.Navbar{
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    background-color: rgb(127, 24, 223);
+    height: 200px;
+    background-image: linear-gradient(rgb(127, 24, 223),white);
+}
+.NavLink{
+    float: left;
+    margin-top: 25px;
+    transition: 0.2s;
+    display: block;
+    color: white;
+    text-align: center;
+    padding: 14px 19px;
+    text-decoration: none;
+}  
+.NavLink:hover{
+    background-color: rgb(149, 77, 216);
+    text-decoration: none;
+    color: white;
+    font-size: 20px;
+    cursor: pointer;
+}
+.Brand{
+    float: left;
+    margin-top: 10px;
+    font-size: 32px;
+    padding-right: 40px;
+    transition: 0.2s;
+    color: white;
+    margin-top: 25px;
+    padding-left: 20px;
+}
+.Brand:hover{
+    text-decoration: none;
+    color: #cbce91ff;
+}
+.SuggestAccount{
+    margin-top: 20px;
+    margin-left: auto;
+    margin-right: auto;
+    width: 600px;
+    padding: 30px 50px;
+    box-shadow: 5px 5px 5px black;
+    border-radius: 15px;
+    border-top: gray solid 2px;
+    border-left: gray solid 2px;
+    background-color: rgb(241, 230, 252);
+    text-align: center;
+}
+.SuggestAccount h6{
+    padding-top: 20px;
+}
+@media only screen and (max-width: 600px) {
+    .Navbar{height: 414px;}
+    .NavLink{clear: left;background-color: rgb(149, 77, 216);width: 100%;}
+    .SuggestAccount{width: auto; margin: 0px 30px;}
+}
+.Type td{
+    height: 30px;
+    transition: 0.3s;
+}
+.Type{
+    border: 1px solid rgb(214, 214, 214);
+    height: 30px;
+    transition: 0.3s;
+    float: right;
+    margin-right: 50px;
+    margin-top: 50px;
+    padding-left: 0px;
+    width: 350px;
+    border-collapse: inherit;
+    text-align: center;
+    border-radius: 5px;
+}
+.Type tr:hover{
+    cursor: pointer;
+    font-size: 20px;
+    color: rgb(185, 156, 212);
+}
+.CurrentMode{
+    cursor: pointer;
+    background-color: rgba(221, 221, 221, 0.849);
+    font-size: 20px;
+    color: rgb(185, 156, 212);
+}
+.Type h5{
+    padding-top: 5px;
+}
+.HeaderTable{
+    background-color: rgba(177, 175, 175, 0.822);
+}
+.HeaderTable:hover{
+    cursor: default;
+    background-color: rgb(185, 156, 212);
+    color: black;
+}
+.Post header h5{
+    float: right;
+}
+.Post header span{
+    background-color: cornsilk;
+    font-size: 16px;
+}
+.Post header{
+    background-color: rgb(212, 212, 212);
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+    padding: 20px 20px;
+}
+.Post{
+    width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 50px;
+    border-radius: 10px;
+}
+.Body img{
+    width: 150px;
+    height: 150px;
+    float: left;
+}
+.Body{
+    width: 600px;
+}
+.Description{
+    padding: 10px 30px;
+    height: 110px;
+    width: 450px;
+    background-color: rgb(255, 255, 242);
+    overflow-y: scroll;
+    overflow-x: hidden;
+}
+.More{
+    border: none;
+    border-radius: 5px;
+    height: 30px;
+    margin: 10px 20px;
+    transition: 0.3s;
+}
+.More{background-color:burlywood;}
+.More:hover{background-color:rgba(206, 141, 55, 0.795);}
+.PriceButton{
+    border: none;
+    border-radius: 5px;
+    height: 30px;
+    margin: 10px 20px;
+    transition: 0.3s;
+    background-color: rgb(97, 182, 139);
+    color: black;
+}
+@media only screen and (max-width: 1300px) {
+    .Type{width:70%; margin-left:15%; margin-right:15%;float: none;clear: both;}
+    .Post{width:80%; margin-left:10%; margin-right:10%;}
+    .Post, .Body, .Description{width: auto;}
+    .Body img{width: 100px; height: 100px;}
+}
+
+
+/* width */
+::-webkit-scrollbar {
+width: 10px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+background: #f1f1f1; 
+border-radius: 1px;
+
+}
+    
+/* Handle */
+::-webkit-scrollbar-thumb {
+background: #888; 
+border-radius: 1px;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+background: #555; 
+}

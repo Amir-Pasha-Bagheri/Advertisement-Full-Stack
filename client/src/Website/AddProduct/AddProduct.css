@@ -1,0 +1,121 @@
+.Navbar{
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    background-color: rgb(127, 24, 223);
+    height: 200px;
+    background-image: linear-gradient(rgb(127, 24, 223),white);
+}
+.NavLink{
+    float: left;
+    margin-top: 25px;
+    transition: 0.2s;
+    display: block;
+    color: white;
+    text-align: center;
+    padding: 14px 19px;
+    text-decoration: none;
+}  
+.NavLink:hover{
+    background-color: rgb(149, 77, 216);
+    text-decoration: none;
+    color: white;
+    font-size: 20px;
+}
+.Brand{
+    float: left;
+    margin-top: 10px;
+    font-size: 32px;
+    padding-right: 40px;
+    transition: 0.2s;
+    color: white;
+    margin-top: 25px;
+    padding-left: 20px;
+}
+.Brand:hover{
+    text-decoration: none;
+    color: #cbce91ff;
+}
+.SuggestAccount{
+    margin-top: 20px;
+    margin-left: auto;
+    margin-right: auto;
+    width: 600px;
+    padding: 30px 50px;
+    box-shadow: 5px 5px 5px black;
+    border-radius: 15px;
+    border-top: gray solid 2px;
+    border-left: gray solid 2px;
+    background-color: rgb(241, 230, 252);
+    text-align: center;
+}
+.SuggestAccount h6{
+    padding-top: 20px;
+}
+@media only screen and (max-width: 600px) {
+    .Navbar{height: 414px;}
+    .NavLink{clear: left;background-color: rgb(149, 77, 216);width: 100%;}
+    .SuggestAccount{width: auto; margin: 0px 30px;}
+}
+.CreatePost{
+    width: 50%;
+    margin-left: 25%;
+    margin-right: 25%;
+    background-color: rgb(216, 216, 216);
+    margin-top: 60px;
+    padding: 30px 30px;
+    border-radius: 20px;
+    overflow: hidden;
+    transition: 0.2s;
+}
+.CreatePost input{
+    width: 50%;
+}
+.CreatePost hr{
+    margin-left: -30px;
+    width: 125%;
+    border: 1px white solid;
+}
+.CreatePost button{
+    border: none;
+    border-radius: 5px;
+    height: 30px;
+    transition: 0.3s;
+    width: 80%;
+    margin: 10px 10% 0px 10%;
+}
+.CreatePost:hover{
+    box-shadow: 4px 4px 5px black;
+}
+.ErrorMessage{
+    padding-top: 20px;
+    text-align: center;
+    color: brown;
+}
+label{ 
+    margin-top: 10px;
+}
+.CreatePost textarea{
+    resize: none;
+}
+.InputImage{
+    background-color: white;
+    border-radius: 5px;
+    padding: 2px 3px;
+    height: 35px;
+    padding-bottom: 20px;
+}
+.SuccessMessage{
+    text-align: center;
+    color: green;
+    margin: 40px 0px 40px 0px;
+    padding: 20px 0px;
+    border-radius: 7px;
+    background-color: rgb(167, 201, 167);
+}
+@media only screen and (max-width: 1100px) {
+    .CreatePost{width: 70%;margin-left: 15%; margin-right: 15%;}
+    .SuccessMessage{width: 80%;margin-left: 10%; margin-right: 10%;}
+    .CreatePost input{width: 90%;} 
+}

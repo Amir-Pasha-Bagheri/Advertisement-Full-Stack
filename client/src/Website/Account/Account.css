@@ -1,0 +1,73 @@
+.Navbar{
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    background-color: rgb(127, 24, 223);
+    height: 200px;
+    background-image: linear-gradient(rgb(127, 24, 223),white);
+}
+.NavLink{
+    float: left;
+    margin-top: 25px;
+    transition: 0.2s;
+    display: block;
+    color: white;
+    text-align: center;
+    padding: 14px 19px;
+    text-decoration: none;
+}  
+.NavLink:hover{
+    background-color: rgb(149, 77, 216);
+    text-decoration: none;
+    color: white;
+    font-size: 20px;
+}
+.Brand{
+    float: left;
+    margin-top: 10px;
+    font-size: 32px;
+    padding-right: 40px;
+    transition: 0.2s;
+    color: white;
+    margin-top: 25px;
+    padding-left: 20px;
+}
+.Brand:hover{
+    text-decoration: none;
+    color: #cbce91ff;
+}
+@media only screen and (max-width: 600px) {
+    .Navbar{height: 414px;}
+    .NavLink{clear: left;background-color: rgb(149, 77, 216);width: 100%;}
+}
+.UsePass{
+    background-color:"white";
+    border:"none";
+    border-radius: 10px;
+    background-color: rgb(216, 222, 135);
+    color:"black"; 
+    padding: 3px 3px;
+}
+.ChangePass{
+    border: none;
+    border-radius: 3px;
+}
+.LogOut{
+    border: none;
+    border-radius: 3px;
+    background-color: crimson;
+}
+.ChanePassContainer{
+    display: none;
+}
+.DangerMessage{
+    text-align: center;
+    margin: 40px 0px 40px 0px;
+    padding: 20px 0px;
+    border-radius: 7px;
+    background-color: rgb(167, 201, 167);
+}
+@media only screen and (max-width: 1100px) {
+    .DangerMessage{width: 80%;margin-left: 10%; margin-right: 10%;}
+}
