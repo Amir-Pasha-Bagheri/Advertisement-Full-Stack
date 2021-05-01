@@ -3,19 +3,20 @@ import {Link} from 'react-router-dom'
 import './Account.css'
 import { connect } from 'react-redux'
 import history from "../../history";
-import * as act from '../../Data/action'
+import axios from 'axios'
 
 class Account extends Component{
+
+    state = {
+        currentUser : ''
+    }
+
+    componentDidMount(){
+        axios.get('http://localhost:3001/Profile',{withCredentials:true})
+        .then(res=>res.data===''?history.goBack():this.setState({currentUser:res.data}))
+    }
+
     render(){
-        let password
-        if(this.props.status.currentUser===undefined){
-            history.push('/')
-        }
-        else {
-            // Find Password Of Current User
-            const FindPass = this.props.status.users.find(e=> e.username===this.props.status.currentUser)
-            password = FindPass.password
-        }
         const SignInClick = () =>{
             this.props.status.currentUser===undefined? history.push('/Create-Account'): history.push('/Account')
         }
@@ -103,53 +104,39 @@ class Account extends Component{
         }
         //Change Password Display Form
         const ChangePass = () => document.getElementById("ChanePassContainer").style.display==="block"? document.getElementById("ChanePassContainer").style.display="none":document.getElementById("ChanePassContainer").style.display = "block"
-        
-        
-        //Check New Password
-        const checkNewPass = (e) =>{
+       
+        const ChangePassword = (e) =>{
             e.preventDefault()
-            const validAmount = document.querySelectorAll(".valid")
             const pass1 = document.getElementById('password1').value
             const pass2 = document.getElementById('password2').value
             const messageDanger = document.getElementById('DangerMessage')
             const messageSuccess = document.getElementById('SuccessMessage')
-            if(validAmount.length!==4){
-                messageDanger.innerHTML = ' At Least One Lowercase, One Uppercase And One Number !'
-                messageDanger.style.display = "block"
-                messageSuccess.style.display = "none"
+            if(pass1!==pass2){
+                messageSuccess.style.display = 'none'
+                messageDanger.style.display = 'block'
+                messageDanger.innerHTML = 'Your Entered Passwords Are Not Same !'
             }
             else{
-                if(pass1.length<6){
-                    messageDanger.innerHTML = 'Your Password Is Too Short !'
-                    messageDanger.style.display = "block"
-                    messageSuccess.style.display = "none"
-                }
-                else{
-                    if(pass1!==pass2){
-                        messageDanger.innerHTML = 'Your Passwords Are Not Match !'
-                        messageDanger.style.display = "block"
-                        messageSuccess.style.display = "none" 
+                axios.post('http://localhost:3001/Profile/',{password:pass1,username:this.state.currentUser})
+                .then(res=>{
+                    if(res.data.id==='failed'){
+                        messageSuccess.style.display = 'none'
+                        messageDanger.style.display = 'block'
+                        messageDanger.innerHTML = res.data.text
                     }
-                    else {
-                        if(pass1===password){
-                            messageDanger.innerHTML = 'Your New Password Cannot Be Your Current Password !'
-                            messageDanger.style.display = "block"
-                            messageSuccess.style.display = "none"
-                        }
-                        else{
-                            const index = this.props.status.users.findIndex(user=>user.username===this.props.status.currentUser)
-                            this.props.dispatch({type:act.ChangePassword,newpassword: pass1,index: index})
-                            messageDanger.style.display = "none"
-                            messageSuccess.style.display = "block"
-                        }
+                    else{
+                        messageSuccess.style.display = 'block'
+                        messageDanger.style.display = 'none'
+                        messageSuccess.innerHTML = res.data.text
                     }
-                } 
+                })     
             }
         }
 
         //Log Out Dispatch
         const LogOut = () =>{
-            this.props.dispatch({type:act.SetUserUndefind})
+            axios.delete('http://localhost:3001/Profile/',{withCredentials: true})
+            .then(res=> res.data===''?history.push('/'):false)
         }
 
         return(
@@ -159,7 +146,7 @@ class Account extends Component{
                     <Link to="/"><li className="NavLink rounded">Home 🏠</li></Link>
                     <Link to="/Add-Product" ><li className="NavLink rounded">Add Your Product ✔</li></Link>
                     <Link to="/Contact-Us"><li className="NavLink rounded">Contact Us ☎</li></Link>
-                    <li className="NavLink rounded"  style={{color:"#cbce91ff"}} onClick={SignInClick}>{this.props.status.currentUser===undefined? 'Sign In 🙍‍♂️': this.props.status.currentUser}</li>
+                    <li className="NavLink rounded"  style={{color:"#cbce91ff"}} onClick={SignInClick}>{this.state.currentUser === '' ? 'Sign In 🙍‍♂️': this.state.currentUser}</li>
                 </ul>
 
                 <h3 className="SuccessMessage" id="SuccessMessage" style={{display:"none"}}>
@@ -172,11 +159,10 @@ class Account extends Component{
                 <div className="Container">
                     <hr/>
 
-                    <p>Username : <span className="UsePass">{this.props.status.currentUser}</span><br/></p>
-                    <p>password : <span className="UsePass" id="CurrentPassContainer">{password}</span></p><br/>
+                    <p>Username : <span className="UsePass">{this.state.currentUser}</span><br/></p>
                     <button className="ChangePass" onClick={ChangePass}>Change Password</button><br/><br/>
                     
-                    <form className="ChanePassContainer" id="ChanePassContainer">
+                    <form className="ChanePassContainer" id="ChanePassContainer" method='POST' onSubmit={ChangePassword}>
                         <div className="input-group mb-3">
                             <input type="password" id="password1" onKeyUp={enterPassword1} className="form-control" pattern="(?=.*\d)(?=.*[A-Z])(?=.*[a-z]).{6,}" name="password" placeholder="At least one Lowercase, Uppercase and number And 6 Characters" title="Your Password Must Contain at least 6 Characters one Lowercase, one Uppercase and Number." required/>
                             <div className="input-group-append input-group-text">
@@ -197,7 +183,7 @@ class Account extends Component{
                             <p id="chars" className="invalid">At least 6 Characters Or More.</p><br/>
                         </div>
 
-                        <button className="ChangePass" type="submit" onClick={checkNewPass}>Done</button><br/><br/>
+                        <button className="ChangePass" type="submit">Done</button><br/><br/>
                     </form>
 
                     <button className="LogOut" onClick={LogOut}>Log Out</button><br/><br/>

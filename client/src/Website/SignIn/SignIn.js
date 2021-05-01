@@ -1,11 +1,26 @@
 import React, {Component} from 'react'
 import {Link} from 'react-router-dom'
-import { connect } from 'react-redux'
 import history from '../../history'
-import * as act from '../../Data/action'
+import axios from 'axios'
 import './SignIn.css'
 
 class SignIn extends Component{
+
+    state={
+        Message:''
+    }
+
+    componentDidUpdate(){
+        if(this.state.Message==='ok'){
+            history.push('/Log-In')
+            document.getElementById('DangerMessage').style.display = 'none'
+        }
+        else{
+            document.getElementById('DangerMessage').innerHTML = this.state.Message
+            document.getElementById('DangerMessage').style.display = 'block'
+        }
+    }
+
     render(){
         const enterUserName = (event)=>{
             let userName = document.getElementById('username').value
@@ -79,26 +94,12 @@ class SignIn extends Component{
         }
 
         const submit = (e) =>{
-            // CREATING NEW ACCOUNT
-            const validAmount = document.querySelectorAll(".valid")
-            let usernameField = document.getElementById('username').value
-            // CHECK USERNAME
-            const usernameFind = this.props.status.users.find(user=>user.username===usernameField)
-            if(!usernameFind){
-                // CHECK PASSWORD
-                if(validAmount.length===4 && usernameField.length>=8){
-                    this.props.dispatch({type:act.SetUser, username: usernameField})
-                    this.props.dispatch({type:act.AddUserToArray, username: usernameField, password: document.getElementById('password').value})
-    
-                    document.getElementById('username').value = ''
-                    document.getElementById('password').value = ''
-                    history.push('/')
-                }
-            }
-            else{
-                e.preventDefault()
-                document.getElementById('DangerMessage').style.display = "block"
-            }
+            e.preventDefault()
+            axios.post('http://localhost:3001/Signup',{
+                username:document.getElementById('username').value,
+                password:document.getElementById('password').value
+            })
+            .then((res)=>this.setState({Message:res.data}))
         }
         return(
             <React.Fragment>
@@ -107,12 +108,12 @@ class SignIn extends Component{
                     <Link to="/"><li className="NavLink rounded">Home 🏠</li></Link>
                     <Link to="/Add-Product" ><li className="NavLink rounded">Add Your Product ✔</li></Link>
                     <Link to="/Contact-Us"><li className="NavLink rounded">Contact Us ☎</li></Link>
-                    <Link to="/Create-Account"><li className="NavLink rounded" style={{color:"#cbce91ff"}}>Sign In 🙍‍♂️</li></Link>
+                    <Link to="/Create-Account"><li className="NavLink rounded" style={{color:"#cbce91ff"}}>Sign Up 🙍‍♂️</li></Link>
                 </ul>
 
-                <h3 className="DangerMessage bg-danger" id="DangerMessage" style={{display:"none"}}>This Username Already Exist !</h3>
+                <h3 className="DangerMessage bg-danger" id="DangerMessage" style={{display:"none"}}>{this.state.Message==='ok'?false:this.state.Message}</h3>
 
-                <form className="SignInForm">
+                <form className="SignInForm" action='POST' onSubmit={submit}>
                     <hr/>
 
                     <label htmlFor="name">Username :</label>
@@ -132,7 +133,7 @@ class SignIn extends Component{
                         <p id="number" className="invalid">At least One Number.</p>
                         <p id="chars" className="invalid">At least 6 Characters Or More.</p><br/>
                     </div>
-                    <button className="SubmitAccount bg-success" onClick={submit}>Submit</button>
+                    <button className="SubmitAccount bg-success">Submit</button>
 
                 </form><br/><br/>
             </React.Fragment>
@@ -140,9 +141,4 @@ class SignIn extends Component{
     }
 }
 
-const mapStateToProps = state =>{
-    const status = state
-    return {status}
-  }
-
-export default connect(mapStateToProps)(SignIn)
+export default SignIn

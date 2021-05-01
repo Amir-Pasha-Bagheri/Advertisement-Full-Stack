@@ -4,12 +4,23 @@ import {Link} from 'react-router-dom'
 import { connect } from 'react-redux'
 import history from "../../history";
 import Post from '../Post/Post' 
+import axios from 'axios'
 
 
 class Homepage extends Component {
+
+        state = {
+            currentUser:''
+        }
+
+        componentDidMount(){
+            axios.get('http://localhost:3001/',{withCredentials:true})
+            .then(res=>this.setState({currentUser:res.data}))
+        }
+
     render(){
-        const SignInClick = () =>{
-            this.props.status.currentUser===undefined? history.push('/Create-Account'): history.push('/Account')
+        const SignUpClick = () =>{
+            this.state.currentUser === '' ? history.push('/Create-Account'): history.push('/Account')
         }
         return(
             <React.Fragment>
@@ -18,10 +29,10 @@ class Homepage extends Component {
                     <Link to="/"><li className="NavLink rounded" style={{color:"#cbce91ff"}}>Home 🏠</li></Link>
                     <Link to="/Add-Product" ><li className="NavLink rounded">Add Your Product ✔</li></Link>
                     <Link to="/Contact-Us"><li className="NavLink rounded">Contact Us ☎</li></Link>
-                    <li className="NavLink rounded" onClick={SignInClick}>{this.props.status.currentUser===undefined? 'Sign In 🙍‍♂️': this.props.status.currentUser}</li>
+                    <li className="NavLink rounded" onClick={SignUpClick}>{this.state.currentUser === '' ? 'Sign Up 🙍‍♂️': this.state.currentUser}</li>
                 </ul>
 
-                {this.props.status.currentUser===undefined ? 
+                {this.state.currentUser === '' ? 
                 <div className="SuggestAccount">
                     <h4>Create Account To Sell Your Own Products</h4>
                     <Link to="/Create-Account"><h5>Create Account</h5></Link>
@@ -71,10 +82,14 @@ class Homepage extends Component {
                         </tbody>
                     </table>
                 </div>
+
+
                 <div id="page1">
                     {this.props.status.posts.map((post,index)=>
                     <Post key={index} name={post.name} price={post.price} img={post.img} description={post.description} date={post.date}/>)}
                 </div>
+
+
             </React.Fragment>
         )
     }

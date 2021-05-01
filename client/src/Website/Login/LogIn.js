@@ -1,11 +1,22 @@
 import React, {Component} from 'react'
 import {Link} from 'react-router-dom'
 import { connect } from 'react-redux'
-import * as act from '../../Data/action' 
+import axios from 'axios'
 import history from '../../history'
 import './LogIn.css'
 
 class LogIn extends Component{
+
+    state = {
+        Message : null
+    }
+
+    componentDidUpdate(){
+        const msg = document.getElementById('DangerMessage')
+        if(msg.innerHTML!==null) msg.style.display = 'block'
+        else msg.style.display = 'none'
+    }
+
     render(){
         const enterUserName = (event)=>{
             let userName = document.getElementById('username').value
@@ -81,26 +92,13 @@ class LogIn extends Component{
         //Finding Existing Account For Log In 
         const submit = (e) =>{
             e.preventDefault()
-            let usernameField = document.getElementById('username').value
-            const userFind = this.props.status.users.find(user=>user.username===usernameField)
-            if(userFind){
-                if(usernameField===userFind.username){
-                    if(userFind.password===document.getElementById('password').value){
-                        this.props.dispatch({type:act.SetUser, username: usernameField})
-                        history.push('/')
-                    }
-                    else{
-                        document.getElementById('DangerMessage').style.display = "block"
-                        document.getElementById('DangerMessage').innerHTML = "Password Is Not Correct !"
-                    }
-                }
-                else{
-                    document.getElementById('DangerMessage').style.display = "block"
-                }
-            }
-            else{
-                document.getElementById('DangerMessage').style.display = "block"
-            }
+            axios.post('http://localhost:3001/Login',{
+                username:document.getElementById('username').value,
+                password:document.getElementById('password').value
+            },{
+                withCredentials: true
+            })
+            .then(res=>res.data==='ok'?history.push('/'):this.setState({Message:res.data}))
         }
         return(
             <React.Fragment>
@@ -113,9 +111,9 @@ class LogIn extends Component{
                 </ul>
 
 
-                <h3 className="DangerMessage bg-danger" id="DangerMessage" style={{display:"none"}}>This Username Does Not Exist !</h3>
+                <h3 className="DangerMessage bg-danger" id="DangerMessage" style={{display:"none"}}>{this.state.Message}</h3>
 
-                <form className="SignInForm">
+                <form className="SignInForm" method='POST' onSubmit={submit}>
                     <hr/>
 
                     <label htmlFor="name">Username :</label>
@@ -135,7 +133,7 @@ class LogIn extends Component{
                         <p id="number" className="invalid">At least One Number.</p>
                         <p id="chars" className="invalid">At least 6 Characters Or More.</p><br/>
                     </div>
-                    <button className="SubmitAccount bg-success" onClick={submit}>Submit</button>
+                    <button className="SubmitAccount bg-success">Submit</button>
                     
                 </form><br/><br/>
             </React.Fragment>
