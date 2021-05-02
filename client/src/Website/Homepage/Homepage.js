@@ -1,21 +1,23 @@
 import React, { Component } from "react";
 import './Homepage.css'
 import {Link} from 'react-router-dom'
-import { connect } from 'react-redux'
 import history from "../../history";
 import Post from '../Post/Post' 
 import axios from 'axios'
+
+import placeholder from "../../Data/Image/placeholder.png"
 
 
 class Homepage extends Component {
 
         state = {
-            currentUser:''
+            currentUser:'',
+            List:[]
         }
 
         componentDidMount(){
             axios.get('http://localhost:3001/',{withCredentials:true})
-            .then(res=>this.setState({currentUser:res.data}))
+            .then(res=>this.setState({currentUser:res.data.username, List: res.data.List }))
         }
 
     render(){
@@ -85,8 +87,8 @@ class Homepage extends Component {
 
 
                 <div id="page1">
-                    {this.props.status.posts.map((post,index)=>
-                    <Post key={index} name={post.name} price={post.price} img={post.img} description={post.description} date={post.date}/>)}
+                    {this.state.List.map((post,index)=>
+                        <Post key={index} name={post.name} price={post.price} img={placeholder} description={post.description} date={post.date}/>)}
                 </div>
 
 
@@ -95,9 +97,4 @@ class Homepage extends Component {
     }
 }
 
-const mapStateToProps = state =>{
-    const status = state
-    return {status}
-  }
-
-export default connect(mapStateToProps)(Homepage)
+export default Homepage
