@@ -10,12 +10,11 @@ const session = require('express-session')
 const flash = require('express-flash')
 const bodyParser = require('body-parser')
 
+
 const app = express()
 
 const initializePassport = require('./passport-config')
 initializePassport(passport,username=>users.find(user=>user.username===username),id=>users.find(user=>user.id===id))
-
-const users = []
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -34,9 +33,18 @@ app.use(passport.session())
 
 /*-------------------------------------------------   API's   -------------------------------------------------*/
 
+const users = []
+const List = [
+    {name: 'Clothes' ,price : 36 ,description : "This Is My Sister's Shirt." ,date : '2021/4/4'},
+    {name: 'Shoes' ,price : 50 ,description : 'These Are My Blue Shoes Wich I Really Love Them...' ,date : '2021/3/24'}
+]
 
 app.get('/', checkAuthenticated ,(req,res)=>{
-    res.send(req.user.username)
+    const Data = {
+        username : req.user.username,
+        List : List
+    }
+    res.send(Data)
 })
 
 
@@ -52,7 +60,6 @@ app.post('/Signup',async (req,res)=>{
             username: req.body.username ,
             password: hashedPassword
         })
-        console.log(users)
         res.send('ok')
     }
 })
@@ -100,7 +107,29 @@ app.delete('/Profile',(req,res)=>{
 //If User Loged In
 function checkAuthenticated(req,res,next) {
     if(req.isAuthenticated()) return next()
-    else res.send('')
+    else {
+        const Data = {
+            username : '',
+            List : List
+        }
+        res.send(Data)
+    }
 }
+
+
+/*-------------------------------------------------  Users Control   -------------------------------------------------*/
+
+
+app.post('/Add-Product',(req,res)=>{
+    const newPost = {
+        name:req.body.name,
+        date:req.body.date,
+        price:req.body.price,
+        description:req.body.description
+    }
+    List.unshift(newPost)
+    res.send('/')
+})
+
 
 app.listen(3001,console.log('Running On Port 3001...'))
