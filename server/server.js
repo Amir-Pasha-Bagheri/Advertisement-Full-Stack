@@ -35,17 +35,9 @@ app.use(passport.session())
 
 const users = []
 const List = [
-    {name: 'Clothes' ,price : 36 ,description : "This Is My Sister's Shirt." ,date : '2021/4/4'},
-    {name: 'Shoes' ,price : 50 ,description : 'These Are My Blue Shoes Wich I Really Love Them...' ,date : '2021/3/24'}
+    {name: 'Clothes', owner:'Mr.X' ,price : 36 ,description : "This Is My Sister's Shirt." ,date : '2021/4/4'},
+    {name: 'Shoes', owner:'Mr.Y' ,price : 50 ,description : 'These Are My Blue Shoes Wich I Really Love Them...' ,date : '2021/3/24'}
 ]
-
-app.get('/', checkAuthenticated ,(req,res)=>{
-    const Data = {
-        username : req.user.username,
-        List : List
-    }
-    res.send(Data)
-})
 
 
 app.post('/Signup',async (req,res)=>{
@@ -120,15 +112,33 @@ function checkAuthenticated(req,res,next) {
 /*-------------------------------------------------  Users Control   -------------------------------------------------*/
 
 
+app.get('/', checkAuthenticated ,(req,res)=>{
+    const Data = {
+        username : req.user.username,
+        List : List
+    }
+    res.send(Data)
+})
+
 app.post('/Add-Product',(req,res)=>{
     const newPost = {
         name:req.body.name,
+        id: Number(req.body.id),
+        owner:req.body.owner,
         date:req.body.date,
         price:req.body.price,
         description:req.body.description
     }
     List.unshift(newPost)
     res.send('/')
+})
+
+app.post('/Delete-Product',(req,res)=>{
+    const post = List.find(post=>post.id===Number(req.body.id))
+    if(post){
+        const index = List.indexOf(post) 
+        List.splice(index , 1)
+    }
 })
 
 
