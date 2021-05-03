@@ -1,7 +1,6 @@
 import React, { Component } from "react";
 import {Link} from 'react-router-dom'
 import './Account.css'
-import { connect } from 'react-redux'
 import history from "../../history";
 import axios from 'axios'
 
@@ -194,9 +193,4 @@ class Account extends Component{
     }
 }
 
-const mapStateToProps = state =>{
-    const status = state
-    return {status}
-  }
-
-export default connect(mapStateToProps)(Account)
+export default Account

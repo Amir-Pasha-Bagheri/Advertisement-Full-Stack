@@ -4,13 +4,23 @@ import telegram from './Image/telegram.png'
 import whatsapp from './Image/whatsapp.jpg'
 import gmail from './Image/gmail.png'
 import {Link} from 'react-router-dom'
-import { connect } from 'react-redux'
 import history from "../../history";
+import axios from 'axios'
 
 class ContactUs extends Component {
+
+    state = {
+        currentUser : ''
+    }
+
+    componentDidMount(){
+        axios.get('http://localhost:3001/',{withCredentials:true})
+        .then(res=>this.setState({currentUser:res.data.username}))
+    }
+
     render(){
         const SignInClick = () =>{
-            this.props.status.currentUser===undefined? history.push('/Create-Account'): history.push('/Account')
+            this.state.currentUser === '' ? history.push('/Create-Account'): history.push('/Account')
         }
         return(
             <React.Fragment>
@@ -19,7 +29,7 @@ class ContactUs extends Component {
                     <Link to="/"><li className="NavLink rounded">Home 🏠</li></Link>
                     <Link to="/Add-Product" ><li className="NavLink rounded">Add Your Product ✔</li></Link>
                     <Link to="/Contact-Us"><li className="NavLink rounded" style={{color:"#cbce91ff"}}>Contact Us ☎</li></Link>
-                    <li className="NavLink rounded" onClick={SignInClick}>{this.props.status.currentUser===undefined? 'Sign In 🙍‍♂️': this.props.status.currentUser}</li>
+                    <li className="NavLink rounded" onClick={SignInClick}>{this.state.currentUser === '' ? 'Sign Up 🙍‍♂️': this.state.currentUser}</li>
                 </ul>
 
                 <div className="Container">
@@ -40,9 +50,4 @@ class ContactUs extends Component {
     }
 }
 
-const mapStateToProps = state =>{
-    const status = state
-    return {status}
-  }
-
-export default connect(mapStateToProps)(ContactUs)
+export default ContactUs

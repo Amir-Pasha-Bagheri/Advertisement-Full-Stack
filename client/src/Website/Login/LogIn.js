@@ -1,6 +1,5 @@
 import React, {Component} from 'react'
 import {Link} from 'react-router-dom'
-import { connect } from 'react-redux'
 import axios from 'axios'
 import history from '../../history'
 import './LogIn.css'
@@ -141,9 +140,4 @@ class LogIn extends Component{
     }
 }
 
-const mapStateToProps = state =>{
-    const status = state
-    return {status}
-  }
-
-export default connect(mapStateToProps)(LogIn)
+export default LogIn
