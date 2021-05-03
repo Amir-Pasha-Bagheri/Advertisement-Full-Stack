@@ -4,22 +4,13 @@ import ContactUs from '../Website/ContactUs/ContactUs'
 import SignIn from '../Website/SignIn/SignIn'
 import Login from '../Website/Login/LogIn'
 import Account from '../Website/Account/Account'
-import Old from '../Website/Homepage/Old/Old'
-import DownToUp from '../Website/Homepage/DownToUp/DownToUp'
-import UpToDown from '../Website/Homepage/UpToDown/UpToDown'
 
-import {Provider} from 'react-redux'
-import store from '../Data/store'
-
-const homepage = () =>{return <Provider store={store}><Homepage/></Provider>}
-const addproduct = () =>{return <Provider store={store}><AddProduct/></Provider>}
-const contactus = () =>{return <Provider store={store}><ContactUs/></Provider>}
-const signin = () =>{return <Provider store={store}><SignIn/></Provider>}
-const login = () =>{return <Provider store={store}><Login/></Provider>}
-const account = () =>{return <Provider store={store}><Account/></Provider>}
-const old = () =>{return <Provider store={store}><Old/></Provider>}
-const uptodown = () =>{return <Provider store={store}><UpToDown/></Provider>}
-const downtoup = () =>{return <Provider store={store}><DownToUp/></Provider>}
+const homepage = () =>{return <Homepage/>}
+const addproduct = () =>{return <AddProduct/>}
+const contactus = () =>{return <ContactUs/>}
+const signin = () =>{return <SignIn/>}
+const login = () =>{return <Login/>}
+const account = () =>{return <Account/>}
 const notfound = () =>{return(
     <div>Not Found</div>
 )}
@@ -31,8 +22,5 @@ export{
     contactus,
     signin,
     login,
-    account,
-    old,
-    downtoup,
-    uptodown
+    account
 }

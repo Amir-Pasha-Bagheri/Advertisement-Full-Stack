@@ -6,17 +6,13 @@ import reportWebVitals from './reportWebVitals';
 import ScrollToTop from './Routes/ScrollToUp'
 import {Router} from 'react-router-dom'
 import 'bootstrap/dist/css/bootstrap.min.css';
-import {Provider} from 'react-redux'
-import store from './Data/store'
 import history from './history'
 
 ReactDOM.render(
-  <Provider store={store}>
     <Router history={history}>
       <Routes />
       <ScrollToTop/>
-    </Router>
-  </Provider>,
+    </Router>,
   document.getElementById('root')
 );
 

@@ -6,10 +6,6 @@ const Routes = () =>{
         <div>
             <Switch>
                 <Route exact path="/" component={page.homepage}/>
-                <Route path="/Home-Page-O" component={page.old}/>
-                <Route path="/Home-Page-DU" component={page.downtoup}/>
-                <Route path="/Home-Page-UD" component={page.uptodown}/>
-
                 <Route path="/Add-Product" component={page.addproduct}/>
                 <Route path="/Contact-Us" component={page.contactus}/>
                 <Route path="/Create-Account" component={page.signin}/>
