@@ -32,7 +32,9 @@ class AddProduct extends Component {
 
             //Connect Server
             axios.post('http://localhost:3001/Add-Product/',{
+                id: Date.now().toString(),
                 name : document.getElementById('name').value,
+                owner: this.state.currentUser,
                 price : document.getElementById('price').value,
                 date : date,
                 description : document.getElementById('description').value

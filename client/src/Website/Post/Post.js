@@ -1,7 +1,15 @@
+import axios from "axios";
 import React, { Component } from "react";
 
 class Post extends Component {
+
     render(){
+        const Delete = () =>{
+            axios.post('http://localhost:3001/Delete-Product',{
+                id : this.props.id
+            })
+            .then(window.location.reload())
+        }
         return(
             <div className="Post">
                 <header>
@@ -15,6 +23,8 @@ class Post extends Component {
                     </div>
                     <button className="More">More Details And Negotiation</button>
                     <button className="PriceButton" disabled>{this.props.price} $</button>
+                    <br/>
+                    <button className='Delete' id='Delete' style={this.props.owner===this.props.currentUser?{display:'block'}:{display:'none'}} onClick={()=>Delete()}> Delete </button>
                 </div>
                 <hr/>
             </div>

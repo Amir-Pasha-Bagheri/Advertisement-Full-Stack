@@ -5,7 +5,7 @@ import history from "../../history";
 import Post from '../Post/Post' 
 import axios from 'axios'
 
-import placeholder from "../../Data/Image/placeholder.png"
+import placeholder from "../Image/placeholder.png"
 
 
 class Homepage extends Component {
@@ -24,6 +24,68 @@ class Homepage extends Component {
         const SignUpClick = () =>{
             this.state.currentUser === '' ? history.push('/Create-Account'): history.push('/Account')
         }
+
+        const ChangeMode = (id) =>{
+
+            const New = document.getElementById('New')
+            const old = document.getElementById('Old')
+            const downUp = document.getElementById('DownUp')
+            const upDown = document.getElementById('UpDown') 
+
+            if(id==='DownUp'){
+                New.classList.remove('CurrentMode')
+                New.classList.add('NotMode')
+                old.classList.remove('CurrentMode')
+                old.classList.add('NotMode')
+                upDown.classList.remove('CurrentMode')
+                upDown.classList.add('NotMode')
+
+                downUp.classList.add('CurrentMode')
+
+                axios.get('http://localhost:3001/',{withCredentials:true})
+                .then(res=>this.setState({currentUser:res.data.username, List: res.data.List.sort(function(a,b){return a.price - b.price}) }))
+            }
+            else if(id==='UpDown'){
+                New.classList.remove('CurrentMode')
+                New.classList.add('NotMode')
+                old.classList.remove('CurrentMode')
+                old.classList.add('NotMode')
+                downUp.classList.remove('CurrentMode')
+                downUp.classList.add('NotMode')
+
+                upDown.classList.add('CurrentMode')
+
+                axios.get('http://localhost:3001/',{withCredentials:true})
+                .then(res=>this.setState({currentUser:res.data.username, List: res.data.List.sort(function(a,b){ return b.price - a.price}) }))
+            }
+            else if(id==='New'){
+                downUp.classList.remove('CurrentMode')
+                downUp.classList.add('NotMode')
+                old.classList.remove('CurrentMode')
+                old.classList.add('NotMode')
+                upDown.classList.remove('CurrentMode')
+                upDown.classList.add('NotMode')
+
+                New.classList.add('CurrentMode')
+
+                axios.get('http://localhost:3001/',{withCredentials:true})
+                .then(res=>this.setState({currentUser:res.data.username, List: res.data.List }))
+            }
+            else if(id==='Old'){
+                New.classList.remove('CurrentMode')
+                New.classList.add('NotMode')
+                downUp.classList.remove('CurrentMode')
+                downUp.classList.add('NotMode')
+                upDown.classList.remove('CurrentMode')
+                upDown.classList.add('NotMode')
+
+                old.classList.add('CurrentMode')
+
+                axios.get('http://localhost:3001/',{withCredentials:true})
+                .then(res=>this.setState({currentUser:res.data.username, List: res.data.List.reverse()}))
+            }
+        }
+
         return(
             <React.Fragment>
                 <ul className="Navbar">
@@ -49,37 +111,19 @@ class Homepage extends Component {
                                 <td className="HeaderTable"><h5>Price</h5></td>
                             </tr>
                             <tr>
-                                <td title="Cheap To Expensive">
-                                    <Link to="Home-Page-DU" id="DU"
-                                    style={{textDecoration:"none",color:'black'}}
-                                    onMouseEnter={()=>document.getElementById('DU').style.color='rgb(185, 156, 212)'}
-                                    onMouseLeave={()=>document.getElementById('DU').style.color='black'}>
-                                    Down To Up</Link>
-                                </td>
+                                <td title="Cheap To Expensive" className='NotMode' id='DownUp' onClick={()=>ChangeMode('DownUp')}>Down To Up</td>
                             </tr>
                             <tr>
-                                <td title="Expensive To Cheap">
-                                    <Link to="Home-Page-UD" id="UD"
-                                    style={{textDecoration:"none",color:'black'}}
-                                    onMouseEnter={()=>document.getElementById('UD').style.color='rgb(185, 156, 212)'}
-                                    onMouseLeave={()=>document.getElementById('UD').style.color='black'}>
-                                    Up To Down</Link>
-                                </td>
+                                <td title="Expensive To Cheap" className='NotMode' id='UpDown' onClick={()=>ChangeMode('UpDown')}>Up To Down</td>
                             </tr>
                             <tr>
                                 <td className="HeaderTable"><h5>Date</h5></td>
                             </tr>
                             <tr>
-                                <td title="Recent Products" className="CurrentMode">Newest</td>
+                                <td title="Recent Products" className="CurrentMode" id='New' onClick={()=>ChangeMode('New')}>Newest</td>
                             </tr>
                             <tr>
-                                <td title="Latest Products">
-                                    <Link to="Home-Page-O" id="O"
-                                    style={{textDecoration:"none",color:'black'}}
-                                    onMouseEnter={()=>document.getElementById('O').style.color='rgb(185, 156, 212)'}
-                                    onMouseLeave={()=>document.getElementById('O').style.color='black'}>
-                                    Oldest</Link>
-                                </td>
+                                <td title="Latest Products" className='NotMode' id='Old' onClick={()=>ChangeMode('Old')}>Oldest</td>
                             </tr>
                         </tbody>
                     </table>
@@ -88,7 +132,7 @@ class Homepage extends Component {
 
                 <div id="page1">
                     {this.state.List.map((post,index)=>
-                        <Post key={index} name={post.name} price={post.price} img={placeholder} description={post.description} date={post.date}/>)}
+                        <Post key={index} name={post.name} owner={post.owner} id={post.id} currentUser={this.state.currentUser} price={post.price} img={placeholder} description={post.description} date={post.date}/>)}
                 </div>
 
 
