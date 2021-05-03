@@ -60,7 +60,7 @@
     .SuggestAccount{width: auto; margin: 0px 30px;}
 }
 .Type td{
-    height: 30px;
+    height: 40px;
     transition: 0.3s;
 }
 .Type{
@@ -75,17 +75,6 @@
     border-collapse: inherit;
     text-align: center;
     border-radius: 5px;
-}
-.Type tr:hover{
-    cursor: pointer;
-    font-size: 20px;
-    color: rgb(185, 156, 212);
-}
-.CurrentMode{
-    cursor: pointer;
-    background-color: rgba(221, 221, 221, 0.849);
-    font-size: 20px;
-    color: rgb(185, 156, 212);
 }
 .Type h5{
     padding-top: 5px;
@@ -105,6 +94,15 @@
     background-color: cornsilk;
     font-size: 16px;
 }
+.Post .Delete{
+    margin-left: 170px;
+    background-color: rgb(153, 84, 84);
+    border-radius: 5px;
+    border: none;
+    transition: 0.3s;
+}
+.Post .Delete:hover{background-color: rgb(156, 0, 0);}
+.Post .Delete:active{color: white;}
 .Post header{
     background-color: rgb(212, 212, 212);
     border-top-left-radius: 10px;
@@ -181,4 +179,16 @@ border-radius: 1px;
 /* Handle on hover */
 ::-webkit-scrollbar-thumb:hover {
 background: #555; 
+}
+
+.CurrentMode{
+    cursor: pointer;
+    background-color: rgba(221, 221, 221, 0.849);
+    font-size: 20px;
+    color: rgb(185, 156, 212);
+}
+.NotMode:hover{
+    color: rgb(185, 156, 212);
+    cursor: pointer;
+    font-size: 20px;
 }
