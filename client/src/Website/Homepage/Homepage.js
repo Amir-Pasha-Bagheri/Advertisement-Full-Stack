@@ -16,7 +16,12 @@ class Homepage extends Component {
         }
 
         componentDidMount(){
-            axios.get('http://localhost:3001/',{withCredentials:true})
+            axios.get('http://localhost:3001/', {
+                withCredentials: true,
+                headers : {
+                    'Authorization' : `Bearer ${localStorage.getItem("token")}`
+                }
+            })
             .then(res=>this.setState({currentUser:res.data.username, List: res.data.List }))
         }
 

@@ -5,15 +5,29 @@ import history from '../../history'
 import './LogIn.css'
 
 class LogIn extends Component{
-
+    _isMounted = false
     state = {
-        Message : null
+        message : null
+    }
+
+    componentDidMount(){
+        this._isMounted = true
     }
 
     componentDidUpdate(){
         const msg = document.getElementById('DangerMessage')
-        if(msg.innerHTML!==null) msg.style.display = 'block'
-        else msg.style.display = 'none'
+        if(msg.innerHTML==='Error!') msg.style.display = 'none'
+        else msg.style.display = 'block'
+
+        if(this.state.message.message!=='No User With Given Username'&&this.state.message.message!=='Password Incorrect'){
+            localStorage.setItem("token" , this.state.message.accessToken)
+            localStorage.setItem("refreshToken" , this.state.message.refreshToken)
+            history.push('/')
+        }
+    }
+
+    componentWillUnmount(){
+        this._isMounted = false
     }
 
     render(){
@@ -97,7 +111,7 @@ class LogIn extends Component{
             },{
                 withCredentials: true
             })
-            .then(res=>res.data==='ok'?history.push('/'):this.setState({Message:res.data}))
+            .then(res=>this.setState({message:res.data}))
         }
         return(
             <React.Fragment>
@@ -110,7 +124,7 @@ class LogIn extends Component{
                 </ul>
 
 
-                <h3 className="DangerMessage bg-danger" id="DangerMessage" style={{display:"none"}}>{this.state.Message}</h3>
+                {this.state.message!==null ?<h3 className="DangerMessage bg-danger" id="DangerMessage" style={{display:"none"}}>{this.state.message.message}</h3>:false}
 
                 <form className="SignInForm" method='POST' onSubmit={submit}>
                     <hr/>

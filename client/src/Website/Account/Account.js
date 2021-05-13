@@ -11,13 +11,19 @@ class Account extends Component{
     }
 
     componentDidMount(){
-        axios.get('http://localhost:3001/Profile',{withCredentials:true})
-        .then(res=>res.data===''?history.goBack():this.setState({currentUser:res.data}))
+        axios.get('http://localhost:3001/Profile', {
+                withCredentials: true,
+                headers : {
+                    'Authorization' : `Bearer ${localStorage.getItem("token")}`
+                }
+            })
+        .then(res=>res.data.currentUser===undefined?history.goBack():this.setState({currentUser:res.data.currentUser}))
+        
     }
 
     render(){
         const SignInClick = () =>{
-            this.props.status.currentUser===undefined? history.push('/Create-Account'): history.push('/Account')
+            this.state.currentUser === ''? history.push('/Create-Account'): history.push('/Account')
         }
 
         //Password Validation
@@ -134,8 +140,11 @@ class Account extends Component{
 
         //Log Out Dispatch
         const LogOut = () =>{
-            axios.delete('http://localhost:3001/Profile/',{withCredentials: true})
-            .then(res=> res.data===''?history.push('/'):false)
+            axios.delete('http://localhost:3001/Profile/',{data:{refreshToken:localStorage.getItem("refreshToken")}})
+                .then(res=> res.data===''?history.push('/'):false)
+
+            localStorage.removeItem("token")
+            localStorage.removeItem("refreshToken")
         }
 
         return(
