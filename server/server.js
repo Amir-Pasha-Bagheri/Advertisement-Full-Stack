@@ -9,6 +9,7 @@ const passport = require('passport')
 const session = require('express-session')
 const flash = require('express-flash')
 const bodyParser = require('body-parser')
+const jwt = require('jsonwebtoken')
 
 
 const app = express()
@@ -34,6 +35,7 @@ app.use(passport.session())
 /*-------------------------------------------------   API's   -------------------------------------------------*/
 
 const users = []
+const tokens = []
 const List = [
     {name: 'Clothes', owner:'Mr.X' ,price : 36 ,description : "This Is My Sister's Shirt." ,date : '2021/4/4'},
     {name: 'Shoes', owner:'Mr.Y' ,price : 50 ,description : 'These Are My Blue Shoes Wich I Really Love Them...' ,date : '2021/3/24'}
@@ -59,18 +61,23 @@ app.post('/Signup',async (req,res)=>{
 app.post('/Login',(req,res,next) =>{
     passport.authenticate('local',(err,user,info)=>{
         if(err) throw err
-        if(!user) res.send(info.message)
+        if(!user) res.send({message : info.message})
         else{
             req.logIn(user, (err) =>{
                 if (err) throw err
-                res.send('ok')
+                
+                // JWT SETUP
+                const accessToken = jwt.sign({username:req.user.username}, process.env.ACCESS_TOKEN_SECRET , {expiresIn : '5s'})
+                const refreshToken = jwt.sign({username:req.user.username}, process.env.REFRESH_TOKEN_SECRET )
+                tokens.push(refreshToken)
+                res.send({accessToken:accessToken,refreshToken:refreshToken})
             })
         }
     })(req,res,next)
 })
 
 app.get('/Profile',checkAuthenticated,(req,res)=>{
-    res.send(req.user.username)
+    res.send({currentUser : users.find(user=>user.username===req.user.username).username})
 })
 
 app.post('/Profile',async (req,res)=>{
@@ -92,21 +99,26 @@ app.post('/Profile',async (req,res)=>{
 })
 
 app.delete('/Profile',(req,res)=>{
+    const refreshToken = req.body.refreshToken
+
+    for( var i = 0; i < tokens.length; i++){ 
+        if ( tokens[i] === refreshToken) tokens.splice(i, 1);
+    } 
     req.logOut()
     res.send('')
 })
 
-//If User Loged In
-function checkAuthenticated(req,res,next) {
-    if(req.isAuthenticated()) return next()
-    else {
-        const Data = {
-            username : '',
-            List : List
-        }
-        res.send(Data)
-    }
-}
+app.post('/refresh-token', (req,res)=>{
+    const token = req.body.refreshToken
+    if(token===null) return res.send('null')
+    if(!tokens.includes(token)) return res.send('not include')
+    
+    jwt.verify(token,process.env.REFRESH_TOKEN_SECRET,(err,user)=>{
+        if(err) return res.send('verify error')
+        const accessToken = jwt.sign({username:user.username}, process.env.ACCESS_TOKEN_SECRET, {expiresIn:'5s'})
+        res.send(accessToken)
+    })
+})
 
 
 /*-------------------------------------------------  Users Control   -------------------------------------------------*/
@@ -114,7 +126,7 @@ function checkAuthenticated(req,res,next) {
 
 app.get('/', checkAuthenticated ,(req,res)=>{
     const Data = {
-        username : req.user.username,
+        username : users.find(user=>user.username===req.user.username).username ,
         List : List
     }
     res.send(Data)
@@ -140,6 +152,34 @@ app.post('/Delete-Product',(req,res)=>{
         List.splice(index , 1)
     }
 })
+
+
+/*-------------------------------------------------  Middlewares   -------------------------------------------------*/
+
+
+//If User Loged In
+function checkAuthenticated(req,res,next) {
+    const Data = {
+        username : '',
+        List : List
+    }
+    if(req.isAuthenticated()){
+        
+        //Token Authentication Check
+
+        const AuthHeader = req.headers['authorization']
+        const token = AuthHeader && AuthHeader.split(' ')[1]
+
+        if(token === null) return res.send(Data)
+        jwt.verify(token , process.env.ACCESS_TOKEN_SECRET,(err,user)=>{
+            if (err) return res.send(Data)
+            req.user = user
+            next()
+        })
+
+    }
+    else res.send(Data)
+}
 
 
 app.listen(3001,console.log('Running On Port 3001...'))
