@@ -32,7 +32,7 @@ app.use(passport.initialize())
 app.use(passport.session())
 
 
-/*-------------------------------------------------   API's   -------------------------------------------------*/
+/*-------------------------------------------------   API's (DOWN)  -------------------------------------------------*/
 
 const users = []
 const tokens = []
@@ -67,7 +67,7 @@ app.post('/Login',(req,res,next) =>{
                 if (err) throw err
                 
                 // JWT SETUP
-                const accessToken = jwt.sign({username:req.user.username}, process.env.ACCESS_TOKEN_SECRET , {expiresIn : '5s'})
+                const accessToken = jwt.sign({username:req.user.username}, process.env.ACCESS_TOKEN_SECRET , {expiresIn : '5m'})
                 const refreshToken = jwt.sign({username:req.user.username}, process.env.REFRESH_TOKEN_SECRET )
                 tokens.push(refreshToken)
                 res.send({accessToken:accessToken,refreshToken:refreshToken})
@@ -108,20 +108,20 @@ app.delete('/Profile',(req,res)=>{
     res.send('')
 })
 
-app.post('/refresh-token', (req,res)=>{
+app.post('/Refresh-Token', (req,res)=>{
     const token = req.body.refreshToken
     if(token===null) return res.send('null')
     if(!tokens.includes(token)) return res.send('not include')
     
     jwt.verify(token,process.env.REFRESH_TOKEN_SECRET,(err,user)=>{
         if(err) return res.send('verify error')
-        const accessToken = jwt.sign({username:user.username}, process.env.ACCESS_TOKEN_SECRET, {expiresIn:'5s'})
+        const accessToken = jwt.sign({username:user.username}, process.env.ACCESS_TOKEN_SECRET, {expiresIn:'5m'})
         res.send(accessToken)
     })
 })
 
 
-/*-------------------------------------------------  Users Control   -------------------------------------------------*/
+/*-------------------------------------------------  Users Control (UP)  -------------------------------------------------*/
 
 
 app.get('/', checkAuthenticated ,(req,res)=>{
@@ -154,7 +154,7 @@ app.post('/Delete-Product',(req,res)=>{
 })
 
 
-/*-------------------------------------------------  Middlewares   -------------------------------------------------*/
+/*-------------------------------------------------  Middlewares (DOWN)  -------------------------------------------------*/
 
 
 //If User Loged In
