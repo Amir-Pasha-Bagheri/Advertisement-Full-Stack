@@ -11,6 +11,14 @@ class Account extends Component{
     }
 
     componentDidMount(){
+
+        setInterval(function(){
+            axios.post('http://localhost:3001/Refresh-Token/',{
+                    refreshToken : localStorage.getItem("refreshToken")
+                })
+                .then(res=>localStorage.setItem("token",res.data))
+        },260000)
+
         axios.get('http://localhost:3001/Profile', {
                 withCredentials: true,
                 headers : {

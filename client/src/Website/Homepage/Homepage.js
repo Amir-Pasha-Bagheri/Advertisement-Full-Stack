@@ -16,6 +16,14 @@ class Homepage extends Component {
         }
 
         componentDidMount(){
+
+            setInterval(function(){
+                axios.post('http://localhost:3001/Refresh-Token/',{
+                        refreshToken : localStorage.getItem("refreshToken")
+                    })
+                    .then(res=>localStorage.setItem("token",res.data))
+            },260000)
+
             axios.get('http://localhost:3001/', {
                 withCredentials: true,
                 headers : {
@@ -23,6 +31,10 @@ class Homepage extends Component {
                 }
             })
             .then(res=>this.setState({currentUser:res.data.username, List: res.data.List }))
+        }
+
+        componentDidUpdate(){
+
         }
 
     render(){
@@ -48,7 +60,7 @@ class Homepage extends Component {
                 downUp.classList.add('CurrentMode')
 
                 axios.get('http://localhost:3001/',{withCredentials:true})
-                .then(res=>this.setState({currentUser:res.data.username, List: res.data.List.sort(function(a,b){return a.price - b.price}) }))
+                .then(res=>this.setState({List: res.data.List.sort(function(a,b){return a.price - b.price}) }))
             }
             else if(id==='UpDown'){
                 New.classList.remove('CurrentMode')
@@ -61,7 +73,9 @@ class Homepage extends Component {
                 upDown.classList.add('CurrentMode')
 
                 axios.get('http://localhost:3001/',{withCredentials:true})
-                .then(res=>this.setState({currentUser:res.data.username, List: res.data.List.sort(function(a,b){ return b.price - a.price}) }))
+                .then(res=>{
+                    this.setState({List: res.data.List.sort(function(a,b){ return b.price - a.price}) })
+                })
             }
             else if(id==='New'){
                 downUp.classList.remove('CurrentMode')
@@ -74,7 +88,7 @@ class Homepage extends Component {
                 New.classList.add('CurrentMode')
 
                 axios.get('http://localhost:3001/',{withCredentials:true})
-                .then(res=>this.setState({currentUser:res.data.username, List: res.data.List }))
+                .then(res=>this.setState({List: res.data.List }))
             }
             else if(id==='Old'){
                 New.classList.remove('CurrentMode')
@@ -87,7 +101,7 @@ class Homepage extends Component {
                 old.classList.add('CurrentMode')
 
                 axios.get('http://localhost:3001/',{withCredentials:true})
-                .then(res=>this.setState({currentUser:res.data.username, List: res.data.List.reverse()}))
+                .then(res=>this.setState({List: res.data.List.reverse()}))
             }
         }
 
