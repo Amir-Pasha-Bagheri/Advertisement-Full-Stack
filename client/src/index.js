@@ -7,6 +7,15 @@ import ScrollToTop from './Routes/ScrollToUp'
 import {Router} from 'react-router-dom'
 import 'bootstrap/dist/css/bootstrap.min.css';
 import history from './history'
+import axios from 'axios' 
+
+export const AuthHeader = axios.create({
+  baseURL : 'http://localhost:3001',
+  withCredentials : true ,
+  headers:{
+    Authorization : `Bearer ${localStorage.getItem("token")}`
+  }
+})
 
 ReactDOM.render(
     <Router history={history}>
