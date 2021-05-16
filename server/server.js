@@ -67,20 +67,20 @@ app.post('/Login',(req,res,next) =>{
                 if (err) throw err
                 
                 // JWT SETUP
-                const accessToken = jwt.sign({username:req.user.username}, process.env.ACCESS_TOKEN_SECRET , {expiresIn : '5m'})
-                const refreshToken = jwt.sign({username:req.user.username}, process.env.REFRESH_TOKEN_SECRET )
+                const accessToken = jwt.sign({username:req.user.username}, process.env.ACCESS_TOKEN_SECRET , {expiresIn : '10s'})
+                const refreshToken = jwt.sign({username:req.user.username}, process.env.REFRESH_TOKEN_SECRET , {expiresIn : '20s'})
                 tokens.push(refreshToken)
-                res.send({accessToken:accessToken,refreshToken:refreshToken})
+                res.send({accessToken:accessToken,refreshToken:refreshToken,user:req.user.username})
             })
         }
     })(req,res,next)
 })
 
-app.get('/Profile',checkAuthenticated,(req,res)=>{
-    res.send({currentUser : users.find(user=>user.username===req.user.username).username})
+app.get('/Profile',cehckAuthToken,(req,res)=>{
+    res.send('ok')
 })
 
-app.post('/Profile',async (req,res)=>{
+app.post('/Profile',cehckAuthToken,async (req,res)=>{
     const messages = [
         {id:'failed',text:'Your New Password Cannot Be Your Old Password !'},
         {id:'success',text:'Password Updated !'}
@@ -110,12 +110,12 @@ app.delete('/Profile',(req,res)=>{
 
 app.post('/Refresh-Token', (req,res)=>{
     const token = req.body.refreshToken
-    if(token===null) return res.send('null')
-    if(!tokens.includes(token)) return res.send('not include')
+    if(token===null) return res.send('')
+    if(!tokens.includes(token)) return res.send('')
     
     jwt.verify(token,process.env.REFRESH_TOKEN_SECRET,(err,user)=>{
-        if(err) return res.send('verify error')
-        const accessToken = jwt.sign({username:user.username}, process.env.ACCESS_TOKEN_SECRET, {expiresIn:'5m'})
+        if(err) return res.send('')
+        const accessToken = jwt.sign({username:user.username}, process.env.ACCESS_TOKEN_SECRET, {expiresIn:'10s'})
         res.send(accessToken)
     })
 })
@@ -153,9 +153,20 @@ app.post('/Delete-Product',(req,res)=>{
     }
 })
 
-
 /*-------------------------------------------------  Middlewares (DOWN)  -------------------------------------------------*/
 
+function cehckAuthToken(req,res,next){
+
+    const AuthHeader = req.headers['authorization']
+    const token = AuthHeader && AuthHeader.split(' ')[1]
+
+    if(token === null) return res.send('null token')
+    jwt.verify(token , process.env.ACCESS_TOKEN_SECRET,(err,user)=>{
+        if (err) return res.send(err)
+        req.user = user
+        next()
+    })
+}
 
 //If User Loged In
 function checkAuthenticated(req,res,next) {
