@@ -6,31 +6,9 @@ import axios from 'axios'
 
 class AddProduct extends Component {
 
-    state = {
-        currentUser:''
-    }
-
-    componentDidMount(){
-
-        setInterval(function(){
-            axios.post('http://localhost:3001/Refresh-Token/',{
-                    refreshToken : localStorage.getItem("refreshToken")
-                })
-                .then(res=>localStorage.setItem("token",res.data))
-        },260000)
-
-        axios.get('http://localhost:3001/', {
-            withCredentials: true,
-            headers : {
-                'Authorization' : `Bearer ${localStorage.getItem("token")}`
-            }
-        })
-        .then(res=>this.setState({currentUser:res.data.username}))
-    }
-
     render(){
         const SignInClick = () =>{
-            this.state.currentUser===''? history.push('/Create-Account'): history.push('/Account')
+            localStorage.getItem("user") === null? history.push('/Create-Account'): history.push('/Account')
         }
 
         const submitPost = (e) =>{
@@ -47,7 +25,7 @@ class AddProduct extends Component {
             axios.post('http://localhost:3001/Add-Product/',{
                 id: Date.now().toString(),
                 name : document.getElementById('name').value,
-                owner: this.state.currentUser,
+                owner: localStorage.getItem("user") !== null ? localStorage.getItem("user") : 'MR.S',
                 price : document.getElementById('price').value,
                 date : date,
                 description : document.getElementById('description').value
@@ -62,10 +40,10 @@ class AddProduct extends Component {
                     <Link to="/"><li className="NavLink rounded">Home 🏠</li></Link>
                     <Link to="/Add-Product" ><li className="NavLink rounded" style={{color:"#cbce91ff"}}>Add Your Product ✔</li></Link>
                     <Link to="/Contact-Us"><li className="NavLink rounded">Contact Us ☎</li></Link>
-                    <li className="NavLink rounded" onClick={SignInClick}>{this.state.currentUser===''? 'Sign Up 🙍‍♂️': this.state.currentUser}</li>
+                    <li className="NavLink rounded" onClick={SignInClick}>{localStorage.getItem("user") === null? 'Sign Up 🙍‍♂️': localStorage.getItem("user")}</li>
                 </ul>
 
-                {this.state.currentUser==='' ? 
+                {localStorage.getItem("user") === null ? 
                 <div className="SuggestAccount">
                     <h4>Create Account To Sell Your Own Products</h4>
                     <Link to="/Create-Account"><h5>Create Account</h5></Link>
@@ -75,7 +53,7 @@ class AddProduct extends Component {
 
                     <h3 className="DangerMessage bg-danger" id="DangerMessage" style={{display:"none"}}>⚠ Plaese Fill Out Form !</h3>
 
-                {this.state.currentUser !== '' ? 
+                {localStorage.getItem("user") !== null ? 
                     <form className="CreatePost" method='POST' onSubmit={submitPost}>
                         <hr/>
 

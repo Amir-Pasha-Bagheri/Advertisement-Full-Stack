@@ -3,35 +3,28 @@ import {Link} from 'react-router-dom'
 import './Account.css'
 import history from "../../history";
 import axios from 'axios'
+import {AuthHeader} from '../../index'
 
 class Account extends Component{
 
-    state = {
-        currentUser : ''
-    }
-
     componentDidMount(){
+        if(localStorage.getItem("user")===null) history.goBack()
 
-        setInterval(function(){
-            axios.post('http://localhost:3001/Refresh-Token/',{
-                    refreshToken : localStorage.getItem("refreshToken")
+        AuthHeader.get('/Profile')
+        .then(res=>{
+            if(res.data!=='ok'){
+                AuthHeader.post('/Refresh-Token',{refreshToken:localStorage.getItem("refreshToken")})
+                .then(res=>{
+                    if(res.data!=='') localStorage.setItem("token",res.data)
+                    else history.push('Log-In')
                 })
-                .then(res=>localStorage.setItem("token",res.data))
-        },260000)
-
-        axios.get('http://localhost:3001/Profile', {
-                withCredentials: true,
-                headers : {
-                    'Authorization' : `Bearer ${localStorage.getItem("token")}`
-                }
-            })
-        .then(res=>res.data.currentUser===undefined?history.goBack():this.setState({currentUser:res.data.currentUser}))
-        
+            }
+        })
     }
 
     render(){
         const SignInClick = () =>{
-            this.state.currentUser === ''? history.push('/Create-Account'): history.push('/Account')
+            localStorage.getItem("user")===null? history.push('/Create-Account'): history.push('/Account')
         }
 
         //Password Validation
@@ -130,19 +123,49 @@ class Account extends Component{
                 messageDanger.innerHTML = 'Your Entered Passwords Are Not Same !'
             }
             else{
-                axios.post('http://localhost:3001/Profile/',{password:pass1,username:this.state.currentUser})
-                .then(res=>{
-                    if(res.data.id==='failed'){
-                        messageSuccess.style.display = 'none'
-                        messageDanger.style.display = 'block'
-                        messageDanger.innerHTML = res.data.text
-                    }
-                    else{
-                        messageSuccess.style.display = 'block'
-                        messageDanger.style.display = 'none'
-                        messageSuccess.innerHTML = res.data.text
-                    }
-                })     
+                AuthHeader.post('/Profile/',{password:pass1,username:localStorage.getItem("user")})
+               .then(res=>{
+                   if(res.data.id!==undefined){
+                        if(res.data.id==='failed'){
+                            messageSuccess.style.display = 'none'
+                            messageDanger.style.display = 'block'
+                            messageDanger.innerHTML = res.data.text
+                        }
+                        else if(res.data.id==='success'){
+                            messageSuccess.style.display = 'block'
+                            messageDanger.style.display = 'none'
+                            messageSuccess.innerHTML = res.data.text
+                        }
+                   }
+                   else {
+                    AuthHeader.post('/Refresh-Token',{refreshToken:localStorage.getItem("refreshToken")})
+                    .then(res=>{
+                        if(res.data!=='') {
+                            localStorage.setItem("token",res.data)
+                            axios.post('http://localhost:3001/Profile',{password:pass1,username:localStorage.getItem("user")},
+                            {
+                                withCredentials : true,
+                                headers : {
+                                    'Authorization' : `Bearer ${res.data}`
+                                }
+                            })
+                            .then(res=>{
+                                if(res.data.id==='failed'){
+                                    messageSuccess.style.display = 'none'
+                                    messageDanger.style.display = 'block'
+                                    messageDanger.innerHTML = res.data.text
+                                }
+                                else{
+                                    messageSuccess.style.display = 'block'
+                                    messageDanger.style.display = 'none'
+                                    messageSuccess.innerHTML = res.data.text
+                                }
+                            })
+                        }
+                        else history.push('Log-In')
+                    }) 
+                   }
+               }) 
             }
         }
 
@@ -153,6 +176,7 @@ class Account extends Component{
 
             localStorage.removeItem("token")
             localStorage.removeItem("refreshToken")
+            localStorage.removeItem("user")
         }
 
         return(
@@ -162,7 +186,7 @@ class Account extends Component{
                     <Link to="/"><li className="NavLink rounded">Home 🏠</li></Link>
                     <Link to="/Add-Product" ><li className="NavLink rounded">Add Your Product ✔</li></Link>
                     <Link to="/Contact-Us"><li className="NavLink rounded">Contact Us ☎</li></Link>
-                    <li className="NavLink rounded"  style={{color:"#cbce91ff"}} onClick={SignInClick}>{this.state.currentUser === '' ? 'Sign In 🙍‍♂️': this.state.currentUser}</li>
+                    <li className="NavLink rounded"  style={{color:"#cbce91ff"}} onClick={SignInClick}>{localStorage.getItem("user") === null ? 'Sign In 🙍‍♂️': localStorage.getItem("user")}</li>
                 </ul>
 
                 <h3 className="SuccessMessage" id="SuccessMessage" style={{display:"none"}}>
@@ -175,7 +199,7 @@ class Account extends Component{
                 <div className="Container">
                     <hr/>
 
-                    <p>Username : <span className="UsePass">{this.state.currentUser}</span><br/></p>
+                    <p>Username : <span className="UsePass">{localStorage.getItem("user")}</span><br/></p>
                     <button className="ChangePass" onClick={ChangePass}>Change Password</button><br/><br/>
                     
                     <form className="ChanePassContainer" id="ChanePassContainer" method='POST' onSubmit={ChangePassword}>

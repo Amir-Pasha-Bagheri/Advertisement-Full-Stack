@@ -5,35 +5,12 @@ import whatsapp from './Image/whatsapp.jpg'
 import gmail from './Image/gmail.png'
 import {Link} from 'react-router-dom'
 import history from "../../history";
-import axios from 'axios'
 
 class ContactUs extends Component {
 
-    state = {
-        currentUser : ''
-    }
-
-    componentDidMount(){
-
-        setInterval(function(){
-            axios.post('http://localhost:3001/Refresh-Token/',{
-                    refreshToken : localStorage.getItem("refreshToken")
-                })
-                .then(res=>localStorage.setItem("token",res.data))
-        },260000)
-
-        axios.get('http://localhost:3001/', {
-            withCredentials: true,
-            headers : {
-                'Authorization' : `Bearer ${localStorage.getItem("token")}`
-            }
-        })
-        .then(res=>this.setState({currentUser:res.data.username}))
-    }
-
     render(){
         const SignInClick = () =>{
-            this.state.currentUser === '' ? history.push('/Create-Account'): history.push('/Account')
+            localStorage.getItem("user") === null ? history.push('/Create-Account'): history.push('/Account')
         }
         return(
             <React.Fragment>
@@ -42,7 +19,7 @@ class ContactUs extends Component {
                     <Link to="/"><li className="NavLink rounded">Home 🏠</li></Link>
                     <Link to="/Add-Product" ><li className="NavLink rounded">Add Your Product ✔</li></Link>
                     <Link to="/Contact-Us"><li className="NavLink rounded" style={{color:"#cbce91ff"}}>Contact Us ☎</li></Link>
-                    <li className="NavLink rounded" onClick={SignInClick}>{this.state.currentUser === '' ? 'Sign Up 🙍‍♂️': this.state.currentUser}</li>
+                    <li className="NavLink rounded" onClick={SignInClick}>{localStorage.getItem("user") === null ? 'Sign Up 🙍‍♂️': localStorage.getItem("user")}</li>
                 </ul>
 
                 <div className="Container">
