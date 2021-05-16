@@ -67,8 +67,8 @@ app.post('/Login',(req,res,next) =>{
                 if (err) throw err
                 
                 // JWT SETUP
-                const accessToken = jwt.sign({username:req.user.username}, process.env.ACCESS_TOKEN_SECRET , {expiresIn : '10s'})
-                const refreshToken = jwt.sign({username:req.user.username}, process.env.REFRESH_TOKEN_SECRET , {expiresIn : '20s'})
+                const accessToken = jwt.sign({username:req.user.username}, process.env.ACCESS_TOKEN_SECRET , {expiresIn : '10m'})
+                const refreshToken = jwt.sign({username:req.user.username}, process.env.REFRESH_TOKEN_SECRET , {expiresIn : '7d'})
                 tokens.push(refreshToken)
                 res.send({accessToken:accessToken,refreshToken:refreshToken,user:req.user.username})
             })
@@ -115,7 +115,7 @@ app.post('/Refresh-Token', (req,res)=>{
     
     jwt.verify(token,process.env.REFRESH_TOKEN_SECRET,(err,user)=>{
         if(err) return res.send('')
-        const accessToken = jwt.sign({username:user.username}, process.env.ACCESS_TOKEN_SECRET, {expiresIn:'10s'})
+        const accessToken = jwt.sign({username:user.username}, process.env.ACCESS_TOKEN_SECRET, {expiresIn:'10m'})
         res.send(accessToken)
     })
 })
@@ -132,7 +132,7 @@ app.get('/', checkAuthenticated ,(req,res)=>{
     res.send(Data)
 })
 
-app.post('/Add-Product',(req,res)=>{
+app.post('/Add-Product',cehckAuthToken,(req,res)=>{
     const newPost = {
         name:req.body.name,
         id: Number(req.body.id),
@@ -145,11 +145,12 @@ app.post('/Add-Product',(req,res)=>{
     res.send('/')
 })
 
-app.post('/Delete-Product',(req,res)=>{
+app.post('/Delete-Product',cehckAuthToken,(req,res)=>{
     const post = List.find(post=>post.id===Number(req.body.id))
     if(post){
         const index = List.indexOf(post) 
         List.splice(index , 1)
+        res.send('ok')
     }
 })
 
