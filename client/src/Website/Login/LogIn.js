@@ -6,24 +6,9 @@ import './LogIn.css'
 
 class LogIn extends Component{
     _isMounted = false
-    state = {
-        message : null
-    }
 
     componentDidMount(){
         this._isMounted = true
-    }
-
-    componentDidUpdate(){
-        const msg = document.getElementById('DangerMessage')
-        if(msg.innerHTML==='Error!') msg.style.display = 'none'
-        else msg.style.display = 'block'
-
-        if(this.state.message.message!=='No User With Given Username'&&this.state.message.message!=='Password Incorrect'){
-            localStorage.setItem("token" , this.state.message.accessToken)
-            localStorage.setItem("refreshToken" , this.state.message.refreshToken)
-            history.push('/')
-        }
     }
 
     componentWillUnmount(){
@@ -111,7 +96,22 @@ class LogIn extends Component{
             },{
                 withCredentials: true
             })
-            .then(res=>this.setState({message:res.data}))
+            .then(res=>{
+
+                const msg = document.getElementById('DangerMessage')
+
+                if(res.data.message!==undefined){
+                    msg.style.display = 'block'
+                    msg.innerHTML = res.data.message
+                }
+                else{
+                    msg.style.display = 'none'
+                    localStorage.setItem("token" , res.data.accessToken)
+                    localStorage.setItem("refreshToken" , res.data.refreshToken)
+                    localStorage.setItem("user", res.data.user)
+                    history.push('/')
+                }
+            })
         }
         return(
             <React.Fragment>
@@ -124,7 +124,7 @@ class LogIn extends Component{
                 </ul>
 
 
-                {this.state.message!==null ?<h3 className="DangerMessage bg-danger" id="DangerMessage" style={{display:"none"}}>{this.state.message.message}</h3>:false}
+                <h3 className="DangerMessage bg-danger" id="DangerMessage" style={{display:"none"}}> </h3>
 
                 <form className="SignInForm" method='POST' onSubmit={submit}>
                     <hr/>

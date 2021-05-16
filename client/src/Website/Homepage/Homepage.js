@@ -4,6 +4,7 @@ import {Link} from 'react-router-dom'
 import history from "../../history";
 import Post from '../Post/Post' 
 import axios from 'axios'
+import {AuthHeader} from '../../index'
 
 import placeholder from "../Image/placeholder.png"
 
@@ -11,35 +12,29 @@ import placeholder from "../Image/placeholder.png"
 class Homepage extends Component {
 
         state = {
-            currentUser:'',
             List:[]
         }
 
         componentDidMount(){
-
-            setInterval(function(){
-                axios.post('http://localhost:3001/Refresh-Token/',{
+            AuthHeader.get('/')
+            .then(res=>{
+                this.setState({List : res.data.List})
+                if(res.data.username===''){
+                    AuthHeader.post('/Refresh-Token/',{
                         refreshToken : localStorage.getItem("refreshToken")
                     })
-                    .then(res=>localStorage.setItem("token",res.data))
-            },260000)
-
-            axios.get('http://localhost:3001/', {
-                withCredentials: true,
-                headers : {
-                    'Authorization' : `Bearer ${localStorage.getItem("token")}`
+                    .then(res=>{
+                        if(res.data==='') localStorage.removeItem("user")
+                        else localStorage.setItem("token", res.data)
+                    })
                 }
             })
-            .then(res=>this.setState({currentUser:res.data.username, List: res.data.List }))
-        }
-
-        componentDidUpdate(){
 
         }
 
     render(){
         const SignUpClick = () =>{
-            this.state.currentUser === '' ? history.push('/Create-Account'): history.push('/Account')
+            localStorage.getItem("user") === null ? history.push('/Create-Account'): history.push('/Account')
         }
 
         const ChangeMode = (id) =>{
@@ -112,10 +107,10 @@ class Homepage extends Component {
                     <Link to="/"><li className="NavLink rounded" style={{color:"#cbce91ff"}}>Home 🏠</li></Link>
                     <Link to="/Add-Product" ><li className="NavLink rounded">Add Your Product ✔</li></Link>
                     <Link to="/Contact-Us"><li className="NavLink rounded">Contact Us ☎</li></Link>
-                    <li className="NavLink rounded" onClick={SignUpClick}>{this.state.currentUser === '' ? 'Sign Up 🙍‍♂️': this.state.currentUser}</li>
+                    <li className="NavLink rounded" onClick={SignUpClick}>{localStorage.getItem("user") === null ? 'Sign Up 🙍‍♂️': localStorage.getItem("user")}</li>
                 </ul>
 
-                {this.state.currentUser === '' ? 
+                {localStorage.getItem("user") === null ? 
                 <div className="SuggestAccount">
                     <h4>Create Account To Sell Your Own Products</h4>
                     <Link to="/Create-Account"><h5>Create Account</h5></Link>
@@ -151,7 +146,7 @@ class Homepage extends Component {
 
                 <div id="page1">
                     {this.state.List.map((post,index)=>
-                        <Post key={index} name={post.name} owner={post.owner} id={post.id} currentUser={this.state.currentUser} price={post.price} img={placeholder} description={post.description} date={post.date}/>)}
+                        <Post key={index} name={post.name} owner={post.owner} id={post.id} currentUser={localStorage.getItem("user")!==null?localStorage.getItem("user"):'MR.S'} price={post.price} img={placeholder} description={post.description} date={post.date}/>)}
                 </div>
 
 
