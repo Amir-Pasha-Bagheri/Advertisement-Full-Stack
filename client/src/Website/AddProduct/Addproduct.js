@@ -3,6 +3,7 @@ import {Link} from 'react-router-dom'
 import './AddProduct.css'
 import history from "../../history";
 import axios from 'axios'
+import { AuthHeader } from "../..";
 
 class AddProduct extends Component {
 
@@ -22,7 +23,7 @@ class AddProduct extends Component {
             date = yyyy + '/' + mm + '/' + dd;
 
             //Connect Server
-            axios.post('http://localhost:3001/Add-Product/',{
+            AuthHeader.post('/Add-Product/',{
                 id: Date.now().toString(),
                 name : document.getElementById('name').value,
                 owner: localStorage.getItem("user") !== null ? localStorage.getItem("user") : 'MR.S',
@@ -30,7 +31,33 @@ class AddProduct extends Component {
                 date : date,
                 description : document.getElementById('description').value
             })
-            .then(res=>history.push(`${res.data}`))
+            .then(res=>{
+                if(res.data==='/') history.push(`${res.data}`)
+                else{
+                    AuthHeader.post('/Refresh-Token',{refreshToken:localStorage.getItem("refreshToken")})
+                    .then(res=>{
+                        if(res.data!=='') {
+                            localStorage.setItem("token",res.data)
+                            axios.post('http://localhost:3001/Add-Product',{
+                                id: Date.now().toString(),
+                                name : document.getElementById('name').value,
+                                owner: localStorage.getItem("user") !== null ? localStorage.getItem("user") : 'MR.S',
+                                price : document.getElementById('price').value,
+                                date : date,
+                                description : document.getElementById('description').value
+                            },
+                            {
+                                withCredentials : true,
+                                headers : {
+                                    'Authorization' : `Bearer ${res.data}`
+                                }
+                            })
+                            .then(res=> history.push(`${res.data}`) )
+                        }
+                        else history.push('Log-In')
+                    }) 
+                }
+            })
             
         }
         return(
@@ -50,8 +77,6 @@ class AddProduct extends Component {
                     <h6>Already Have An Account ?  <Link to="/Log-In">Click Here</Link></h6>
                 </div>:
                 false}
-
-                    <h3 className="DangerMessage bg-danger" id="DangerMessage" style={{display:"none"}}>⚠ Plaese Fill Out Form !</h3>
 
                 {localStorage.getItem("user") !== null ? 
                     <form className="CreatePost" method='POST' onSubmit={submitPost}>

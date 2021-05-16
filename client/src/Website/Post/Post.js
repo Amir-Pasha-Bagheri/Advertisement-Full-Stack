@@ -1,14 +1,35 @@
 import axios from "axios";
 import React, { Component } from "react";
+import history from '../../history'
+import {AuthHeader} from '../../index'
 
 class Post extends Component {
 
     render(){
         const Delete = () =>{
-            axios.post('http://localhost:3001/Delete-Product',{
+            AuthHeader.post('/Delete-Product',{
                 id : this.props.id
             })
-            .then(window.location.reload())
+            .then(res=>{
+                if(res.send==='ok') window.location.reload()
+                else{
+                    AuthHeader.post('/Refresh-Token',{refreshToken:localStorage.getItem("refreshToken")})
+                    .then(res=>{
+                        if(res.data!=='') {
+                            localStorage.setItem("token",res.data)
+                            axios.post('http://localhost:3001/Delete-Product',{id:this.props.id},
+                            {
+                                withCredentials : true,
+                                headers : {
+                                    'Authorization' : `Bearer ${res.data}`
+                                }
+                            })
+                            .then( window.location.reload() )
+                        }
+                        else history.push('Log-In')
+                    }) 
+                }
+            })
         }
         return(
             <div className="Post">
