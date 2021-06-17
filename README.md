@@ -1,3 +1,11 @@
+Run Client side: npm start
+
+
+Run Server Side: npm run dev
+
+
+
+
 This project Has been Written By React js , React Router And Node js.
 
 This Is A RESPONSIVE Website
